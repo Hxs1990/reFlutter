@@ -57,13 +57,13 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          target_commitish: ${{env.SNAPSHOT_HASH}}
-          tag_name: android-${{env.SNAPSHOT_HASH}}
+          target_commitish: v2-${{env.SNAPSHOT_HASH}}
+          tag_name: android-v2-${{env.SNAPSHOT_HASH}}
           files: |
             ./*.so
 
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
       - name: Check out repository od
         uses: actions/checkout@v2
@@ -115,7 +115,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          target_commitish: ${{env.SNAPSHOT_HASH}}
-          tag_name: ios-${{env.SNAPSHOT_HASH}}
+          target_commitish: v2-${{env.SNAPSHOT_HASH}}
+          tag_name: ios-v2-${{env.SNAPSHOT_HASH}}
           files: |
             ./Flutter

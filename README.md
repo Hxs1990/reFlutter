@@ -1,4 +1,4 @@
-[![Twitter](https://img.shields.io/twitter/follow/ptswarm.svg?logo=twitter)](https://twitter.com/intent/retweet?tweet_id=1447561219938955265&related=twitterapi,twittermedia,twitter,support)
+[![Twitter](https://img.shields.io/twitter/follow/lmpact_l.svg?logo=twitter)](https://twitter.com/lmpact_l)
 
 [![stars](https://img.shields.io/github/stars/ptswarm/reFlutter)](https://github.com/ptswarm/reFlutter/stargazers) [![workflow](https://img.shields.io/github/workflow/status/ptswarm/reFlutter/Build)](https://github.com/ptswarm/reFlutter/actions)
 
@@ -50,12 +50,12 @@ You don't need to install any certificates. On an Android device, you don't need
 ### Usage on Android
 The resulting apk must be aligned and signed. I use [uber-apk-signer](https://github.com/patrickfav/uber-apk-signer/releases/tag/v1.2.1)
 ```java -jar uber-apk-signer.jar --allowResign -a release.RE.apk```.
-To see which code is loaded through DartVM, you need to run the application on the device. reFlutter prints its output in logcat with the `reflutter` tag
+To see which code is loaded through DartVM, you need to run the application on the device. Note that you must manually find what `_kDartIsolateSnapshotInstructions` (ex. 0xB000 ) equals to using a binary search. reFlutter writes the dump to the root folder of the application and sets `777` permissions to the file and folder. You can pull the file with adb command
 ```console
-impact@f:~$ adb logcat -e reflutter | sed 's/.*DartVM//' >> reflutter.txt
+impact@f:~$ adb -d shell "cat /data/data/<PACKAGE_NAME>/dump.dart" > dump.dart
 ```
 <details>
-<summary>code output</summary>
+<summary>file contents</summary>
 
   
 ```dart
@@ -65,14 +65,20 @@ String* DeepUrl = anyapp://evil.com/ ;
 
  Function 'Navigation.': constructor. (dynamic, dynamic, dynamic, dynamic) => NavigationInteractor { 
   
+              Code Offset: _kDartIsolateSnapshotInstructions + 0x0000000000009270
+  
                    }
     
  Function 'initDeepLinkHandle':. (dynamic) => Future<void>* { 
   
+              Code Offset: _kDartIsolateSnapshotInstructions + 0x0000000000412fe8
+  
                    }
     
  Function '_navigateDeepLink@547106886':. (dynamic, dynamic, {dynamic navigator}) => void { 
-
+  
+              Code Offset: _kDartIsolateSnapshotInstructions + 0x0000000000002638
+  
                    }
  
        }
@@ -82,19 +88,27 @@ Library:'package:anyapp/auth/navigation/AuthAccount.dart' Class: AuthAccount ext
 PlainNotificationToken* _instance = sentinel;
  
  Function 'getAuthToken':. (dynamic, dynamic, dynamic, dynamic) => Future<AccessToken*>* { 
-
+  
+               Code Offset: _kDartIsolateSnapshotInstructions + 0x00000000003ee548
+  
                    }
   
  Function 'checkEmail':. (dynamic, dynamic) => Future<bool*>* { 
- 
+  
+               Code Offset: _kDartIsolateSnapshotInstructions + 0x0000000000448a08
+   
                    }
 
  Function 'validateRestoreCode':. (dynamic, dynamic, dynamic) => Future<bool*>* { 
- 
+  
+               Code Offset: _kDartIsolateSnapshotInstructions + 0x0000000000412c34
+   
                    }
 
  Function 'sendSmsRestorePassword':. (dynamic, dynamic) => Future<bool*>* { 
-
+  
+               Code Offset: _kDartIsolateSnapshotInstructions + 0x00000000003efb88
+  
                    }
        }
 ```
@@ -105,7 +119,7 @@ Use the IPA file created after the execution of `reflutter main.ipa` command. To
 <p align="center"><img src="https://user-images.githubusercontent.com/87244850/135860648-a13ba3fd-93d2-4eab-bd38-9aa775c3178f.png" width="100%"/></p>
 
 ### To Do
-- [ ] Display absolute code offset for functions;
+- [x] Display absolute code offset for functions;
 - [ ] Extract more strings and fields;
 - [x] Add socket patch;
 - [ ] Extend engine support to Debug using Fork and Github Actions;
